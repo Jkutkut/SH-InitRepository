@@ -48,7 +48,7 @@ The script can have the following arguments:
     The parameters ${LBLUE}--dir${NC} or ${LBLUE}--directory${NC} can also be used.\n
   ${LBLUE}[*repoName]${NC}:\n    The name of the repository. Keep in mind that it should match RegEx '^[a-zA-Z0-9-_]+$'\n
   ${LBLUE}--create${NC}:\n    If the repository should be created on github.\n
-  ${LBLUE}--link${NC}:\n    If the repository should be linked to an already created repository on github.\n
+  ${LBLUE}--init${NC}:\n    If the script should connect to an already created repository on github and create the initial files.\n
   ${LBLUE}[templates]:${NC}:\n    To use a template, use the arguments ${LBLUE}--web${NC}, .\n    Each one will generate a repository structure with the basic files of the template.\n
   ${LBLUE}--extraFiles${NC}:\n    If the repository should be created with aditional files.\n
   ${LBLUE}--noExtraFiles${NC}:\n    If the repository should not be created with aditional files.\n
@@ -65,7 +65,7 @@ ${YELLOW}Considerations:${NC}
 repoName=""; # The name of the repository (changed on execution)
 u="jkutkut"; # Default user
 fullDirectory=~/github; # Default directory
-type="create"; # Default type of link (create repository or use already created repository)
+type="create"; # Default type of creation (create or use already created repository)
 extraFiles=1; # If extra files should be created (1: true, 0: false).
 template="None"; # If special templates selected (Web, None)
 
@@ -88,7 +88,7 @@ while [ ! -z $1 ]; do # While the are avalible arguments
             q="Directory?";
             v="fullDirectory";
             ;;
-        --create|--link)
+        --create|--init)
             type=$(echo $1 | sed -e 's/--//');
             shift;
             continue;
@@ -138,7 +138,7 @@ fi
 
 fullDirectory=$fullDirectory/$repoName; # Update directory based on the name of the repo
 
-echo "\nAtempting to link a reposititory on ${YELLOW}$fullDirectory${NC}\nand connect it to the user ${YELLOW}$u${NC}.\n";
+echo "\nAtempting to $type a reposititory on ${YELLOW}$fullDirectory${NC}\nand connect it to the user ${YELLOW}$u${NC}.\n";
 exit 0;
 
 # Create directory and init repository
@@ -200,4 +200,4 @@ else # Connect to github and update the content to the already created repo
     error "Not able to push the changes")
 fi
 
-echo "--------------------------------------\n${LGREEN}\nRepositories linked${NC}\n";
+echo "--------------------------------------\n${LGREEN}\nRepository ready${NC}\n";
