@@ -26,7 +26,7 @@ if [ $1 = "--help" ]; then
 The script can have the following arguments:
   ${LBLUE}-u [*arg]${NC}:\n    Change the user/owner of the repository.
     The parameter ${LBLUE}--user${NC} can also be used.\n
-  ${LBLUE}-d [*arg]${NC}:\n    Change the directory to store the local repository (The path is intended to be absolute).
+  ${LBLUE}-d [*arg]${NC}:\n    Change the directory to store the local repository (The path is intended to be absolute and should not end in '/').
     The parameters ${LBLUE}--dir${NC} or ${LBLUE}--directory${NC} can also be used.\n
   ${LBLUE}[*repoName]${NC}:\n    The name of the repository. Keep in mind that it should match RegEx '^[a-zA-Z0-9-_]+$'\n
   ${LBLUE}--create${NC}:\n    If the repository should be created on github.\n
@@ -38,7 +38,7 @@ The script can have the following arguments:
 
 ${YELLOW}Considerations:${NC}
  - All arguments with ${LBLUE}[*XXX]${NC} expect a single word to follow.\n   If not given, the script will ask for it before execution.
- - All arguments can be concatenated at will.\n   However, only the last ones will have the final desition.\n" | more -d -f;
+ - All arguments can be concatenated at will.\n   However, only the last ones will have the final desition.\n" | more -d;
     exit 0;
 fi
 
@@ -106,13 +106,12 @@ while [ ! -z $1 ]; do # While the are avalible arguments
             continue;
             ;;
         *)
-            if [ $(expr match "$1" ^[a-zA-Z0-9]+$) ]; then
-                # echo "Repo name = '$1'";
+            if [ $(expr match "$1" "^[a-zA-Z0-9]*$") -ge 1 ]; then
                 repoName=$1;
                 shift;
                 continue;
             else
-                error "Invalid argument";
+                error "Invalid argument: $1";
             fi
     esac
 
@@ -129,7 +128,7 @@ while [ ! -z $1 ]; do # While the are avalible arguments
     eval $v="$vContent";
 done
 
-echo currentName: $repoName;
+echo "currentName: '$repoName'";
 if [ $repoName = "" ]; then
     ask "Name of the repository?" "";
     repoName=$askResponse; # Store the name of the Repository.
@@ -141,62 +140,62 @@ echo "\nAtempting to link a reposititory on ${YELLOW}$fullDirectory${NC}\nand co
 
 
 # Create directory and init repository
-(mkdir $fullDirectory || # Make the directory to init the repo
-error "Directory is not correct.") && 
+# (mkdir $fullDirectory || # Make the directory to init the repo
+# error "Directory is not correct.") && 
 
-cd $fullDirectory && # Go to directory
+# cd $fullDirectory && # Go to directory
 
-(git init || # Init repository
-error "Not possible to init git") &&
-
-
-# Create initial files
-(echo -e "# $repoName:\n" >> README.md && # Create the README.md file on the repository
-touch .gitignore || # Create the .gitignore file on the repository
-error "Not posible to create initial files") &&
-
-addFiles2Repo "Initial files created" &&
+# (git init || # Init repository
+# error "Not possible to init git") &&
 
 
-# If we want to create a repository with extra files
-if [ $extraFiles -eq 1 ]; then 
-    # Add the extra files
-    (mkdir ".info" ||
-    error "Not able to create directories on the repository") &&
-    (echo -e "# ThingsToDo:\n- " >> ./.info/ThingsToDo.md || # Create the ThingsToDo.md file on the repository
-    error "not able to create the extra files")
+# # Create initial files
+# (echo -e "# $repoName:\n" >> README.md && # Create the README.md file on the repository
+# touch .gitignore || # Create the .gitignore file on the repository
+# error "Not posible to create initial files") &&
 
-    addFiles2Repo "Extra files added";
-fi
+# addFiles2Repo "Initial files created" &&
 
 
-# If template, implement it
-case $template in
-    web)
-        (mkdir res res/CSS res/Img res/JS ||
-        error "Not able to create the directories of the web template") &&
+# # If we want to create a repository with extra files
+# if [ $extraFiles -eq 1 ]; then 
+#     # Add the extra files
+#     (mkdir ".info" ||
+#     error "Not able to create directories on the repository") &&
+#     (echo -e "# ThingsToDo:\n- " >> ./.info/ThingsToDo.md || # Create the ThingsToDo.md file on the repository
+#     error "not able to create the extra files")
 
-        (echo -e '<!DOCTYPE html><html>\n\t<head>\n\t\t<meta charset=\"utf-8\">\n\n\t\t<!-- Logo & title -->\n\t\t<title>$repoName</title>\n\t\t<!-- <link rel=\"icon\" href=\"\"> -->\n\n\t\t<!-- CSS -->\n\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"res/style.css\">\n\n\t\t<!-- JS -->\n\t\t<script src=\"sketch.js\"></script>\n\t</head>\n\t<body>\n\t</body>\n</html>' >> index.html &&
-        touch sketch.js Res/CSS/style.css ||
-        error "Not able to create the files of the web template")
-esac
-
-if [ ! $template = "None" ]; then # If template selected, add the files created
-    addFiles2Repo "Template $template structure added.";
-fi
+#     addFiles2Repo "Extra files added";
+# fi
 
 
-if [ $type = "create" ]; then # If the intention is to create a repository
-    echo "Creating repository using hub:";
-    hub create ||
-    error "Not able to create repository";
-else # Connect to github and update the content to the already created repo
-    echo "Linking repository to github account";
-    (git remote add origin git@github.com:$u/$repoName.git || # Link the repositories
-    error "Could not execute \"git remote add origin git@github.com:$u/$repoName.git\"";) &&
+# # If template, implement it
+# case $template in
+#     web)
+#         (mkdir res res/CSS res/Img res/JS ||
+#         error "Not able to create the directories of the web template") &&
 
-    (sudo -H -u $USER bash -c 'git push -u origin master' || # Upload the new repository
-    error "Not able to push the changes")
-fi
+#         (echo -e '<!DOCTYPE html><html>\n\t<head>\n\t\t<meta charset=\"utf-8\">\n\n\t\t<!-- Logo & title -->\n\t\t<title>$repoName</title>\n\t\t<!-- <link rel=\"icon\" href=\"\"> -->\n\n\t\t<!-- CSS -->\n\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"res/style.css\">\n\n\t\t<!-- JS -->\n\t\t<script src=\"sketch.js\"></script>\n\t</head>\n\t<body>\n\t</body>\n</html>' >> index.html &&
+#         touch sketch.js Res/CSS/style.css ||
+#         error "Not able to create the files of the web template")
+# esac
+
+# if [ ! $template = "None" ]; then # If template selected, add the files created
+#     addFiles2Repo "Template $template structure added.";
+# fi
+
+
+# if [ $type = "create" ]; then # If the intention is to create a repository
+#     echo "Creating repository using hub:";
+#     hub create ||
+#     error "Not able to create repository";
+# else # Connect to github and update the content to the already created repo
+#     echo "Linking repository to github account";
+#     (git remote add origin git@github.com:$u/$repoName.git || # Link the repositories
+#     error "Could not execute \"git remote add origin git@github.com:$u/$repoName.git\"";) &&
+
+#     (sudo -H -u $USER bash -c 'git push -u origin master' || # Upload the new repository
+#     error "Not able to push the changes")
+# fi
 
 echo "--------------------------------------\n${LGREEN}\nRepositories linked${NC}\n";
