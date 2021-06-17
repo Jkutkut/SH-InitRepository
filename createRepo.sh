@@ -119,7 +119,7 @@ while [ ! -z $1 ]; do # While the are avalible arguments
 
     shift; # -ANY argument removed
         
-    if [ $(expr match "$1" ^\(-.+\)?$) ]; then # If not given
+    if [ $(expr "$1" : "[^-].*") -eq 0 ]; then # If not given
         ask "$q" ""; # Ask for it
         vContent=$askResponse; # The response is the content
     else
