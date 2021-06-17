@@ -139,7 +139,6 @@ fi
 fullDirectory=$fullDirectory/$repoName; # Update directory based on the name of the repo
 
 echo "\nAtempting to $type a reposititory on ${YELLOW}$fullDirectory${NC}\nand connect it to the user ${YELLOW}$u${NC}.\n";
-exit 0;
 
 # Create directory and init repository
 (mkdir $fullDirectory || # Make the directory to init the repo
