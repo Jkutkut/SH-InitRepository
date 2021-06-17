@@ -130,8 +130,8 @@ while [ ! -z $1 ]; do # While the are avalible arguments
     eval $v="$vContent";
 done
 
-echo "currentName: '$repoName'";
-if [ $repoName = "" ]; then
+
+if [ -z "$repoName" ]; then # If repository name not selected yet
     ask "Name of the repository?" "";
     repoName=$askResponse; # Store the name of the Repository.
 fi
