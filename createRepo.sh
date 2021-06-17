@@ -106,7 +106,7 @@ while [ ! -z $1 ]; do # While the are avalible arguments
             continue;
             ;;
         *)
-            if [ $(expr match "$1" "^[a-zA-Z0-9]*$") -ge 1 ]; then
+            if [ $(expr match "$1" "^[a-zA-Z0-9_-]*$") -ge 1 ]; then
                 repoName=$1;
                 shift;
                 continue;
