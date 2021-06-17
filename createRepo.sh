@@ -199,4 +199,5 @@ else # Connect to github and update the content to the already created repo
     error "Not able to push the changes")
 fi
 
-echo "--------------------------------------\n${LGREEN}\nRepository ready${NC}\n";
+echo "--------------------------------------\n${LGREEN}\nRepository ready${NC}\n
+Code developed by Jkutkut github.com/jkutkut";
