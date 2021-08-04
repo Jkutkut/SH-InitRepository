@@ -56,7 +56,7 @@ The script can have the following arguments:
 
 ${YELLOW}Considerations:${NC}
  - All arguments with ${LBLUE}[*XXX]${NC} expect a single word to follow.\n   If not given, the script will ask for it before execution.
- - All arguments can be concatenated at will.\n   However, only the last ones will have the final desition.\n" | more -d;
+ - All arguments can be concatenated at will.\n   However, only the last ones will have the effect.\n" | more -d;
     exit 0;
 }
 
