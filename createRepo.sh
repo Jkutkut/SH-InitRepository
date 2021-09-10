@@ -188,6 +188,7 @@ fi &&
 
 if [ $type = "create" ]; then # If the intention is to create a repository
     echo "Creating repository using hub:";
+    echo "TOKEN 2 USE AS PASSWORD!" | xclip -selection clipboard;
     hub create ||
     error "Not able to create repository";
 else # Connect to github and update the content to the already created repo
